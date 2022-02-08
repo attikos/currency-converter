@@ -1,40 +1,74 @@
 <template>
   <div class="currency-list-wrapper">
-    <h1 class="title">Exchange rate to ruble</h1>
+    <h1 class="title">Exchange rate<br>to Russian Ruble (RUB)</h1>
 
-    <input class="search-input" type="text" placeholder="Search currency">
+    <input
+      class="search-input"
+      type="text"
+      placeholder="Search currency"
+      v-model="searchQuery"
+    >
 
-    <ul class="currency-list">
-      <li v-for="currency in paginatedList" :key="currency.code" class="currency-list-item">
+    <transition-group tag="ul" name="list" class="currency-list">
+      <li
+        v-for="currency in filteredList"
+        :key="currency.CharCode"
+        class="currency-list-item"
+      >
         <div class="list-code">{{ currency.CharCode }}</div>
         <div class="list-name">{{ currency.Name }}</div>
         <div class="list-rate">{{ currency.Value }}</div>
       </li>
 
       <li
-        v-if="paginatedList.length < currencyList.length"
+        v-if="hasLoadMore"
         class="currency-list-item load-more"
         @click="getMoreItems()"
+        key="load-more"
       >... Load more</li>
-    </ul>
+    </transition-group>
+
+    <div v-if="isNotFound" class="not-found">Not found</div>
   </div>
 </template>
 
 <script>
-import { getRates, getRatesEng } from '../api';
+import { getRatesEng } from '../api';
+import { fuzzySearch } from '../utils/fuzzy-search';
 
 export default {
   name: 'CurrencyList',
+
   data() {
     return {
       ratesData: {},
       currencyList: [],
       page: 0,
       limit: 10,
+      searchQuery: '',
     }
   },
 
   computed: {
+    isNotFound() {
+      return this.searchQuery && !this.filteredList.length;
+    },
+
+    hasLoadMore() {
+      return !this.searchQuery && this.paginatedList.length < this.currencyList.length;
+    },
+
+    filteredList() {
+      if (!this.searchQuery) {
+        return this.paginatedList;
+      }
+
+      return this.currencyList.filter(cur => {
+        return fuzzySearch(cur.CharCode, this.searchQuery)
+          || fuzzySearch(cur.Name, this.searchQuery)
+      });
+    },
+
     paginatedList() {
       const start = 0;
       let end = this.page * this.limit + this.limit;
@@ -64,13 +98,10 @@ export default {
 
     async fetchRates() {
       try {
-        // this.ratesData = await getRates();
         this.ratesData = await getRatesEng().then(data => data.ValCurs);
-        console.log('this.ratesData', this.ratesData);
-
 
         const currencyHash = this.ratesData.Valute;
-        this.currencyList = Object.keys(currencyHash).map(currency => currencyHash[currency]);
+        this.currencyList = Object.keys(currencyHash).map(code => currencyHash[code]);
       } catch (error) {
         console.log('error', error);
         throw Error('Error getting rates!');
@@ -185,6 +216,7 @@ $color-text: #fff;
 
   &:last-child {
     border-bottom: none;
+    margin-bottom: 16px;
   }
 
   &:hover {
@@ -199,4 +231,29 @@ $color-text: #fff;
   align-items: center;
 }
 
+.not-found {
+  margin: 8px 16px 24px;
+}
+
+/* Animation */
+.list-item {
+  display: inline-block;
+  margin-right: 10px;
+  max-height: 400px;
+}
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  // transform: translateY(30px);
+  max-height: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+/* /Animation */
 </style>
