@@ -35,3 +35,28 @@ body {
   padding-top: 30px;
   padding-bottom: 30px;
 }
+
+.input {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 3px;
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 18px;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    transition: 0.3s all ease-in-out;
+    border-color: #fff;
+  }
+
+  &::placeholder {
+    color: rgb(231, 231, 231);
+    font-size: 16px;
+  }
+}

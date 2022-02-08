@@ -3,7 +3,7 @@
     <h1 class="title">Exchange rate<br>to Russian Ruble (RUB)</h1>
 
     <input
-      class="search-input"
+      class="search-input input"
       type="text"
       placeholder="Search currency"
       v-model="searchQuery"
@@ -13,6 +13,7 @@
       <li
         v-for="currency in filteredList"
         :key="currency.CharCode"
+        @click="setCurrency(currency)"
         class="currency-list-item"
       >
         <div class="list-code">{{ currency.CharCode }}</div>
@@ -25,24 +26,38 @@
         class="currency-list-item load-more"
         @click="getMoreItems()"
         key="load-more"
-      >... Load more</li>
+      >Load more ...</li>
     </transition-group>
 
-    <div v-if="isNotFound" class="not-found">Not found</div>
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-else-if="isNotFound" class="not-found">Not found</div>
+    <div v-else-if="isLoading" class="loader">Loading...</div>
   </div>
 </template>
 
 <script>
-import { getRatesEng } from '../api';
 import { fuzzySearch } from '../utils/fuzzy-search';
 
 export default {
   name: 'CurrencyList',
 
+  props: {
+    error: {
+      type: String,
+    },
+
+    currencyList: {
+      type: Array,
+    },
+
+    isLoading : {
+      type: Boolean,
+    }
+  },
+
   data() {
     return {
       ratesData: {},
-      currencyList: [],
       page: 0,
       limit: 10,
       searchQuery: '',
@@ -74,39 +89,21 @@ export default {
       let end = this.page * this.limit + this.limit;
 
       if (end > this.currencyList?.length) {
-        end = this.currencyList.length;
+        end = this.currencyList?.length;
       }
 
-      return this.currencyList.slice(start, end);
+      return this.currencyList?.slice(start, end) || [];
     },
-  },
-
-  mounted() {
-    this.fetchRates();
   },
 
   methods: {
     getMoreItems() {
-      console.log('this.page', this.page);
-
-      // this.paginatedList = this.currencyList.slice(this.page, this.limit);
-
-      // console.log('this.currencyList.slice(0, this.limit)', ...this.currencyList.slice(this.page, this.limit));
-
       this.page++;
     },
 
-    async fetchRates() {
-      try {
-        this.ratesData = await getRatesEng().then(data => data.ValCurs);
-
-        const currencyHash = this.ratesData.Valute;
-        this.currencyList = Object.keys(currencyHash).map(code => currencyHash[code]);
-      } catch (error) {
-        console.log('error', error);
-        throw Error('Error getting rates!');
-      }
-    }
+    setCurrency(currency) {
+      this.$emit('set-currency', currency);
+    },
   }
 }
 </script>
@@ -114,17 +111,16 @@ export default {
 <style lang="scss" scoped>
 @import 'src/scss/_breakepoints.scss';
 
-$color-text: #fff;
 .currency-list-wrapper {
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 8px;
-  // padding: 16px;
   width: 400px;
 
   @include xs() {
     border: none;
-    width: 100%;
+    width: calc(100% - 17px);
+    margin-right: 16px;
   }
 }
 
@@ -152,30 +148,8 @@ $color-text: #fff;
 }
 
 .search-input {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 3px;
-  padding: 8px 12px;
-  color: $color-text;
-  font-size: 18px;
   margin: 0 16px 16px;
   width: calc(100% - 59px);
-
-  &:focus-visible {
-    outline: none;
-  }
-
-  &:focus,
-  &:focus-visible {
-    outline: none;
-    transition: 0.3s all ease-in-out;
-    border-color: #fff;
-  }
-
-  &::placeholder {
-    color: rgb(231, 231, 231);
-    font-size: 16px;
-  }
 }
 
 .list-code {
@@ -189,7 +163,7 @@ $color-text: #fff;
   grid-area: name;
   font-size: 13px;
   line-height: 18px;
-  color: $color-text;
+  color: #fff;
   opacity: 0.8;
 }
 
@@ -225,6 +199,7 @@ $color-text: #fff;
 }
 
 .load-more {
+  font-size: 14px;
   min-height: 43px;
   display: flex;
   justify-content: center;
@@ -233,6 +208,25 @@ $color-text: #fff;
 
 .not-found {
   margin: 8px 16px 24px;
+  text-align: center;
+}
+
+.loader {
+  margin: 8px 16px 24px;
+  text-align: center;
+}
+
+.error {
+  font-weight: 500;
+  font-size: 18px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  margin: 8px 16px 24px;
+  text-align: left;
+  border-radius: 4px;
+  color: #fff;
+  background: rgba(255, 0, 0, 0.4);
+  border: 1px solid #f00;
+  padding: 2px 8px;
 }
 
 /* Animation */
