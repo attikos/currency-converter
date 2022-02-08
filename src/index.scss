@@ -1,20 +1,37 @@
+@import 'src/scss/_breakepoints.scss';
+
+html {
+  background-color: #3f3941;
+}
+
 body {
   margin: 0;
-  height: 100vh;
+  padding: 0;
   background: url('/city-bg.webp') no-repeat center;
   background-size: cover;
+  background-attachment: fixed;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 #app {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   font-family: Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
   font-size: 18px;
-  text-shadow: 2px 1px rgba(0, 0, 0, 0.3%);
   color: #fff;
+  text-shadow: 2px 1px rgba(0, 0, 0, 0.3);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 100%;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
