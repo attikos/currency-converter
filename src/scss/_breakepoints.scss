@@ -1,0 +1,94 @@
+/*
+    // mobile first
+    MOBILE> | 576px |>sm-mf> | 768px |>md-mf> | 992px |>lg-mf> | 1200px |>xl-mf
+    sm-mf >= 576px
+    md-mf >= 768px
+    lg-mf >= 992px
+    xl-mf >= 1200px
+    // desktop first
+    xs<| 576px | <sm<| 768px | <md<| 992px | <lg<| 1200px | <DESKTOP
+    xs < 576px
+    sm < 768px
+    md < 768px
+    lg < 992px
+    retina
+    print
+*/
+
+// mobile first
+
+@mixin sm-mf() {
+    @media only screen and (min-width: 576px) {
+        @content;
+    }
+}
+
+@mixin md-mf() {
+    @media only screen and (min-width: 768px) {
+        @content;
+    }
+}
+
+@mixin lg-mf() {
+    @media only screen and (min-width: 992px) {
+        @content;
+    }
+}
+
+@mixin xl-mf() {
+    @media only screen and (min-width: 1200px) {
+        @content;
+    }
+}
+
+
+// desktop first
+
+@mixin xs() {
+    @media only screen and (max-width: 575.98px) {
+        @content;
+    }
+}
+
+@mixin sm() {
+    @media only screen and (max-width: 767.98px) {
+        @content;
+    }
+}
+
+@mixin md() {
+    @media only screen and (max-width: 991.98px) {
+        @content;
+    }
+}
+
+@mixin lg() {
+    @media only screen and (max-width: 1199.98px) {
+        @content;
+    }
+}
+
+/*
+RETINA (2x RESOLUTION DEVICES)
+This applies to the retina iPhone (4s) and iPad (2,3) along with
+other displays with a 2x resolution. You can also create a media
+query for retina AND a certain size if you want. Go Nuts.
+*/
+@mixin retina() {
+    @media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+           only screen and (min--moz-device-pixel-ratio: 1.5),
+           only screen and (min-device-pixel-ratio: 1.5) { @content; }
+}
+
+/*
+PRINT STYLESHEET
+Feel free to customize this. Remember to add things that won't make
+sense to print at the bottom. Things like nav, ads, and forms should
+be set to display none.
+*/
+
+@mixin print() {
+    @media print {
+        @content;
+    }
+}

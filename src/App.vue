@@ -1,15 +1,18 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3.0 + Vite" />
+  <CurrencyList />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import CurrencyList from './components/CurrencyList.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    CurrencyList
   }
 }
 </script>
+
+<style lang="scss" scoped>
+
+</style>
