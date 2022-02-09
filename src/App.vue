@@ -1,12 +1,15 @@
 <template>
   <CurrencyList
     :error="error"
-    :currency-list="currencyList"
+    :currency-rates="currencyRates"
     :is-loading="isLoading"
     @set-currency="setCurrency($event)"
   />
 
-  <Exchange :currency="currency" @close="clearCurrency()"/>
+  <Exchange
+    :currency="currency"
+    @close="clearCurrency()"
+  />
 
   <AppFooter />
 </template>
@@ -29,7 +32,7 @@ export default {
 
   data() {
     return {
-      currencyList: [],
+      currencyRates: [],
       error: null,
       currency: null,
       isLoading: true,
@@ -52,9 +55,7 @@ export default {
     async fetchRates() {
       try {
         this.ratesData = await getRatesEng().then(data => data.ValCurs);
-
-        const currencyHash = this.ratesData.Valute;
-        this.currencyList = Object.keys(currencyHash).map(code => currencyHash[code]);
+        this.currencyRates = this.ratesData.Valute;
       }
       catch (error) {
         this.error = DATA_LOADING_ERROR;

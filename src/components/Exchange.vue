@@ -1,44 +1,190 @@
 <template>
-  <div class="exchange" :class="{ show : currency }">
+  <div class="exchange" :class="{ show : currency, inverted : isInvert }">
     <button class="close" @click="close()">×</button>
 
-    <label for="amount-in">In Rubles (RUB)</label>
-    <input type="text" id="amount-in" name="amount-in" class="input" v-model="amountIn">
+    <div class="amount-in">
+      <label for="amount-in">In RUB (Rubles)</label>
+      <Cleave
+        id="amount-in"
+        v-model="amountIn"
+        :options="cleave.amountIn"
+        name="amount-in"
+        class="input"
+        ref="amountIn"
+      />
+    </div>
 
-    <img src="/arrows.svg" alt="Arrows" class="arrows">
+    <img src="/arrows.svg" alt="Arrows" class="arrows" @click="invert()">
 
-    <label for="amount-out">{{ currencyCode }}</label>
-    <input type="text" name="amount-out" class="input" v-model="amountOut">
+    <div class="amount-out">
+      <label for="amount-out">{{ currencyCode }} ({{currencyName}})</label>
+      <Cleave
+        id="amount-out"
+        v-model="amountOut"
+        :options="cleave.amountOut"
+        name="amount-in"
+        class="input"
+        ref="amountOut"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import Cleave from 'vue-cleave-component';
+import Big from 'big-js';
+
+const DELAY_ANIMATION = 300;
+
 export default {
   name : 'exchange',
+
+  components: {
+    Cleave
+  },
 
   props: {
     currency : {
       type: Object,
-    }
+    },
   },
 
   data() {
     return {
       amountIn : 1,
-      amountOut: null
+      amountOut: null,
+      isInvert: false,
     }
   },
 
   computed : {
     currencyCode() {
       return this.currency?.CharCode;
-    }
+    },
+
+    currencyName() {
+      return this.currency?.Name;
+    },
+
+    cleave() {
+      let payinDecimalScale = '4';
+      let payoutDecimalScale = '4';
+
+      return {
+        amountIn : {
+          numeral                    : true,
+          numeralPositiveOnly        : true,
+          numeralThousandsGroupStyle : ',',
+          numeralDecimalScale        : payinDecimalScale,
+          rawValueTrimPrefix         : true,
+        },
+        amountOut : {
+          numeral                    : true,
+          numeralPositiveOnly        : true,
+          numeralThousandsGroupStyle : ',',
+          numeralDecimalScale        : payoutDecimalScale,
+          rawValueTrimPrefix         : true,
+        },
+      }
+    },
+
+    rate() {
+      return this.currency.Value?.replace(/,/, '.');
+    },
+
+    nominal() {
+      return this.currency.Nominal?.replace(/,/, '.');
+    },
+  },
+
+  mounted() {
+    this.$refs.amountIn?.$el.addEventListener('keyup', () => {
+      this.calcAmount('in');
+    });
+
+    this.$refs.amountOut?.$el.addEventListener('keyup', () => {
+      this.calcAmount('out');
+    });
+  },
+
+  watch: {
+    currency: {
+      deep: true,
+      handler() {
+        if (this.currency) {
+          this.initForm();
+        }
+      },
+    },
   },
 
   methods: {
+    invert() {
+      this.isInvert = !this.isInvert;
+    },
+
+    resetForm() {
+      this.amountIn = 1;
+      this.amountOut = null;
+    },
+
+    initForm() {
+      this.amountIn = this.rate;
+      this.amountOut = this.nominal;
+    },
+
+    checkBase(base) {
+      return base === 'in' || base === 'out';
+    },
+
+    calcAmount(base) {
+      if (!this.checkBase(base) ) {
+        return;
+      };
+
+      if (!this.rate) {
+        return this.resetForm();
+      }
+
+      if (!this.nominal) {
+        return this.resetForm();
+      }
+
+      if (base === 'in') {
+        try {
+          const result = new Big(+this.amountIn)
+              .div(this.rate)
+              .times(this.nominal);
+
+          this.amountOut = result.toString();
+        } catch (error) {
+          this.resetForm();
+          console.error(error);
+        }
+      }
+
+      if (base === 'out') {
+        try {
+          const result = new Big(+this.amountOut)
+              .times(this.rate)
+              .div(this.nominal);
+
+          this.amountIn = result.toString();
+        } catch (error) {
+          this.resetForm();
+          console.error(error);
+        }
+      }
+    },
+
     close() {
       this.$emit('close');
-    }
+
+      setTimeout(() => {
+        this.resetForm();
+        this.isInvert = false;
+      }, DELAY_ANIMATION)
+    },
   },
 };
 </script>
@@ -53,9 +199,19 @@ export default {
   width: 326px;
   border-radius: 8px;
   padding: 16px 16px 24px;
-  display: flex;
-  flex-direction: column;
   border: 1px solid rgba(255, 255, 255, 0.5);
+  display: grid;
+  grid-template-areas: "close"
+    "amount-in"
+    "arrows"
+    "amount-out";
+
+  &.inverted {
+    grid-template-areas: "close"
+      "amount-out"
+      "arrows"
+      "amount-in";
+  }
 
   @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
     & {
@@ -83,12 +239,41 @@ export default {
   }
 }
 
+.amount-in {
+  grid-area: amount-in;
+  display: flex;
+  flex-direction: column;
+
+  & > label {
+    margin-bottom: 4px;
+  }
+
+  & > input {
+    color: rgb(255, 201, 117);
+  }
+}
+
+.amount-out {
+  grid-area: amount-out;
+  display: flex;
+  flex-direction: column;
+
+  & > label {
+    margin-bottom: 4px;
+  }
+
+  & > input {
+    color: rgb(255, 201, 117);
+  }
+}
+
 .arrows {
+  grid-area: arrows;
   opacity: 0.6;
   width: 32px;
   height: 32px;
   display: inline-block;
-  margin: 18px auto 0;
+  margin: 18px auto 10px;
   cursor: pointer;
   padding: 2px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -102,15 +287,16 @@ export default {
 }
 
 .close {
-  padding: 4px;
+  grid-area: close;
+  padding: 6px;
   font-size: 24px;
-  line-height: 24px;
+  line-height: 30px;
   color: rgb(255, 255, 255);
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   background: none;
   border: none;
   cursor: pointer;

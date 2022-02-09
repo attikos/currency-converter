@@ -46,7 +46,7 @@ export default {
       type: String,
     },
 
-    currencyList: {
+    currencyRates: {
       type: Array,
     },
 
@@ -70,7 +70,7 @@ export default {
     },
 
     hasLoadMore() {
-      return !this.searchQuery && this.paginatedList.length < this.currencyList.length;
+      return !this.searchQuery && this.paginatedList.length < this.currencyRates.length;
     },
 
     filteredList() {
@@ -78,7 +78,7 @@ export default {
         return this.paginatedList;
       }
 
-      return this.currencyList.filter(cur => {
+      return this.currencyRates.filter(cur => {
         return fuzzySearch(cur.CharCode, this.searchQuery)
           || fuzzySearch(cur.Name, this.searchQuery)
       });
@@ -88,11 +88,11 @@ export default {
       const start = 0;
       let end = this.page * this.limit + this.limit;
 
-      if (end > this.currencyList?.length) {
-        end = this.currencyList?.length;
+      if (end > this.currencyRates?.length) {
+        end = this.currencyRates?.length;
       }
 
-      return this.currencyList?.slice(start, end) || [];
+      return this.currencyRates?.slice(start, end) || [];
     },
   },
 
@@ -133,14 +133,13 @@ export default {
   margin-inline-end: 0;
   padding-inline-start: 0;
   margin: 0;
-  padding: 0;
+  padding: 0 0 16px;
 }
 
 .title {
   font-weight: 400;
-  font-style: italic;
   font-size: 32px;
-  margin: 16px 16px 8px;
+  margin: 16px;
 
   @include xs() {
     font-size: 24px;
@@ -186,11 +185,11 @@ export default {
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   border-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), #f38b18, rgba(255, 255, 255, 0.2)) 1;
   cursor: pointer;
-  transition: 0.3s all ease-in-out;
+  transition: 0.3s background ease-in-out;
 
   &:last-child {
-    border-bottom: none;
-    margin-bottom: 16px;
+    border-color: transparent;
+    border-image: none;
   }
 
   &:hover {
