@@ -120,8 +120,8 @@ export default {
 
   @include xs() {
     border: none;
-    width: calc(100% - 17px);
-    margin-right: 16px;
+    width: 100vw;
+    margin-right: 0;
   }
 }
 

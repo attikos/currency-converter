@@ -1,5 +1,9 @@
 <template>
-  <div class="exchange" :class="{ show : currency, inverted : isInvert }">
+  <div
+    class="exchange"
+    :class="{ show : currency, inverted : isInvert }"
+    :key="isInvert.toString()"
+  >
     <button class="close" @click="close()">×</button>
 
     <div class="amount-in">
@@ -124,6 +128,7 @@ export default {
       deep: true,
       handler() {
         if (this.currency) {
+          this.resetForm();
           this.initForm();
         }
       },
@@ -138,6 +143,7 @@ export default {
     resetForm() {
       this.amountIn = 1;
       this.amountOut = null;
+      this.isInvert = false;
     },
 
     initForm() {
@@ -191,11 +197,6 @@ export default {
 
     close() {
       this.$emit('close');
-
-      setTimeout(() => {
-        this.resetForm();
-        this.isInvert = false;
-      }, DELAY_ANIMATION)
     },
   },
 };
