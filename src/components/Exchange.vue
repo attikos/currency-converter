@@ -14,7 +14,9 @@
       />
     </div>
 
-    <img src="/arrows.svg" alt="Arrows" class="arrows" @click="invert()">
+    <a class="arrows" @click="invert()">
+      <img src="/arrows.svg" alt="Arrows" class="arrows-img">
+    </a>
 
     <div class="amount-out">
       <label for="amount-out">{{ currencyCode }} ({{currencyName}})</label>
@@ -33,6 +35,7 @@
 <script>
 import Cleave from 'vue-cleave-component';
 import Big from 'big-js';
+import { onClickOutside } from '@vueuse/core'
 
 const DELAY_ANIMATION = 300;
 
@@ -105,6 +108,15 @@ export default {
     this.$refs.amountOut?.$el.addEventListener('keyup', () => {
       this.calcAmount('out');
     });
+
+    onClickOutside(this.$el, (e) => {
+        const isOverlayTarget = e.target?.classList?.toString().includes('js-modal-overlay');
+
+        if (this.currency && isOverlayTarget) {
+          this.close();
+        }
+      },
+    )
   },
 
   watch: {
@@ -195,6 +207,7 @@ export default {
 .exchange {
   margin-top: 20px;
   position: absolute;
+  z-index: 2;
   background: #271e1d45;
   width: 326px;
   border-radius: 8px;
@@ -284,6 +297,12 @@ export default {
     border: 1px solid #fff;
     opacity: 1;
   }
+}
+
+.arrows-img {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
 }
 
 .close {

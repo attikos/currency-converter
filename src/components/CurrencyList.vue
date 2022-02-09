@@ -116,6 +116,7 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 8px;
   width: 400px;
+  z-index: 2;
 
   @include xs() {
     border: none;
@@ -180,11 +181,15 @@ export default {
   grid-template-areas:
     "code rate"
     "name rate";
+
   margin: 0;
   padding: 8px 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.4);
   border-image: linear-gradient(to right, rgba(255, 255, 255, 0.2), #f38b18, rgba(255, 255, 255, 0.2)) 1;
   cursor: pointer;
+  border-top: none;
+  border-right: none;
+  border-left: none;
   transition: 0.3s background ease-in-out;
 
   &:last-child {
