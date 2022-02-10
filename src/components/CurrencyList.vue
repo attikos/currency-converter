@@ -200,6 +200,10 @@ export default {
   &:hover {
     background: rgba(0,0,0,0.3);
   }
+
+  @include xs() {
+    border-image: none;
+  }
 }
 
 .load-more {

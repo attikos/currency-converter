@@ -1,6 +1,4 @@
 <template>
-  <ModalOverlay />
-
   <CurrencyList
     :error="error"
     :currency-rates="currencyRates"

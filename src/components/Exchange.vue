@@ -14,7 +14,7 @@
         :options="cleave.amountIn"
         name="amount-in"
         class="input"
-        ref="amountIn"
+        data-calc-base="in"
       />
     </div>
 
@@ -28,9 +28,9 @@
         id="amount-out"
         v-model="amountOut"
         :options="cleave.amountOut"
-        name="amount-in"
+        name="amount-out"
         class="input"
-        ref="amountOut"
+        data-calc-base="out"
       />
     </div>
   </div>
@@ -40,8 +40,6 @@
 import Cleave from 'vue-cleave-component';
 import Big from 'big-js';
 import { onClickOutside } from '@vueuse/core'
-
-const DELAY_ANIMATION = 300;
 
 export default {
   name : 'exchange',
@@ -105,22 +103,13 @@ export default {
   },
 
   mounted() {
-    this.$refs.amountIn?.$el.addEventListener('keyup', () => {
-      this.calcAmount('in');
-    });
+    document.addEventListener('keyup', this.inputHandler);
 
-    this.$refs.amountOut?.$el.addEventListener('keyup', () => {
-      this.calcAmount('out');
-    });
+    onClickOutside(this.$el, this.clickOutsideHandler);
+  },
 
-    onClickOutside(this.$el, (e) => {
-        const isOverlayTarget = e.target?.classList?.toString().includes('js-modal-overlay');
-
-        if (this.currency && isOverlayTarget) {
-          this.close();
-        }
-      },
-    )
+  beforeUnmount() {
+    document.removeEventListener('keyup', this.inputHandler);
   },
 
   watch: {
@@ -136,6 +125,22 @@ export default {
   },
 
   methods: {
+    inputHandler(e) {
+      const calcBase = e.target.dataset['calcBase'];
+
+      if (calcBase) {
+        this.calcAmount(calcBase);
+      }
+    },
+
+    clickOutsideHandler(e) {
+      const isOutside = e.target?.id === 'app';
+
+      if (this.currency && isOutside) {
+        this.close();
+      }
+    },
+
     invert() {
       this.isInvert = !this.isInvert;
     },
@@ -237,8 +242,8 @@ export default {
 
   @include xs() {
     border: none;
-    width: calc(100% - 47px);
-    margin-right: 16px;
+    width: 85vw;
+    margin-right: 0;
   }
 
   opacity: 0;
