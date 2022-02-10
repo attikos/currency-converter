@@ -1,13 +1,16 @@
 # Currenciy Converter
-Exchange rate to Russian Ruble (RUB)  
-Vue3, Vite, SCSS  
-Demo: https://github.com/attikos/currenciy-converter
+Exchange rate to Russian Ruble (RUB)
+Vue3, Vite, SCSS
+Demo: https://github.com/attikos/currency-converter
 
-# Install  
+![demo vue converter](https://github.com/attikos/currency-converter/blob/main/demo.gif)
+
+
+# Install
 `npm i`
 
-# Run dev server  
+# Run dev server
 `npm run dev`
 
-# Build  
+# Build
 `npm run build`
