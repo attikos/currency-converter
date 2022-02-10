@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import ModalOverlay from './components/ModalOverlay.vue'
 import CurrencyList from './components/CurrencyList.vue'
 import Exchange from './components/Exchange.vue'
 import AppFooter from './components/AppFooter.vue'
@@ -26,7 +25,6 @@ export default {
   name: 'App',
 
   components: {
-    ModalOverlay,
     CurrencyList,
     Exchange,
     AppFooter,
