@@ -12,6 +12,7 @@
     "vue-cleave-component": "^3.0.1"
   },
   "devDependencies": {
+    "@vue/cli-service": "^5.0.8",
     "@vue/compiler-sfc": "^3.0.4",
     "sass": "^1.49.7",
     "vite": "^1.0.0-rc.13"
