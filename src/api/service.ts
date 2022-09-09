@@ -1,34 +1,38 @@
-export const get = (url, body) => {
+export const get = (url: string, body?: any) => {
   return fetch(url, {
     method: 'GET',
     body: JSON.stringify(body),
+	mode: 'no-cors',
   }).then(res => res.json());
 }
 
-export const post = (url, body) => {
+export const post = (url: string, body?: any) => {
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(body),
+	mode: 'no-cors',
   }).then(res => res.json());
 }
 
-export const getFromXml = (url, body) => {
+export const getFromXml = (url: string, body?: any) => {
   return fetch(url, {
     method: 'GET',
     body: JSON.stringify(body),
+	mode: 'no-cors',
   })
     .then(res => res.text())
     .then(data => {
+		console.log('data', data)
       const parser = new DOMParser();
       const xml = parser.parseFromString(data, "application/xml");
       return xmlToJson(xml);
     })
 }
 
-export const xmlToJson = (xml) => {
+export const xmlToJson = (xml: Document|ChildNode): string => {
 
 	// Create the return object
-	var obj = {};
+	var obj: any = {};
 
 	// if (xml.nodeType == 1) { // element
 	// 	// do attributes
@@ -40,8 +44,8 @@ export const xmlToJson = (xml) => {
 	// 		}
 	// 	}
 	// } else
-  if (xml.nodeType == 3) { // text
-		obj = xml.nodeValue;
+    if (xml.nodeType == 3) { // text
+		obj = xml.nodeValue || '';
 	}
 
 	// do children
@@ -49,13 +53,14 @@ export const xmlToJson = (xml) => {
 		for(var i = 0; i < xml.childNodes.length; i++) {
 			var item = xml.childNodes.item(i);
 			var nodeName = item.nodeName;
-			if (typeof(obj[nodeName]) == "undefined") {
-        if (nodeName === '#text') {
-          obj = xmlToJson(item);
-        }
-        else {
-          obj[nodeName] = xmlToJson(item);
-        }
+
+			if (obj && typeof obj === 'object' && typeof(obj[nodeName]) === 'undefined') {
+				if (nodeName === '#text') {
+					obj = xmlToJson(item);
+				}
+				else {
+					obj[nodeName] = xmlToJson(item);
+				}
 			} else {
 				if (typeof(obj[nodeName].push) == "undefined") {
 					var old = obj[nodeName];
@@ -66,5 +71,6 @@ export const xmlToJson = (xml) => {
 			}
 		}
 	}
-	return obj;
+
+	return obj as string;
 };

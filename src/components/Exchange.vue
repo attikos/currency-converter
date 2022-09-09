@@ -36,12 +36,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import Cleave from 'vue-cleave-component';
 import Big from 'big-js';
 import { onClickOutside } from '@vueuse/core'
+import { defineComponent } from 'vue';
+import { Currency } from '../types';
 
-export default {
+export default defineComponent({
   name : 'exchange',
 
   components: {
@@ -50,7 +52,7 @@ export default {
 
   props: {
     currency : {
-      type: Object,
+      type: Object as () => Currency,
     },
   },
 
@@ -204,7 +206,7 @@ export default {
       this.$emit('close');
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

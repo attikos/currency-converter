@@ -57,7 +57,6 @@ export default {
 
   data() {
     return {
-      ratesData: {},
       page: 0,
       limit: 10,
       searchQuery: '',
