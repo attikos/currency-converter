@@ -4,7 +4,7 @@
       href="https://www.cbr-xml-daily.ru/"
       target="_blank"
       rel="nofollow noreferrer noopener"
-    >Курсы валют, API</a>
+    >Currency rates API</a>
   </div>
 </template>
 
