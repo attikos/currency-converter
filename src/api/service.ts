@@ -1,35 +1,31 @@
 export const get = (url: string, body?: any) => {
-  return fetch(url, {
-    method: 'GET',
-    body: JSON.stringify(body),
-	mode: 'no-cors',
-  }).then(res => res.json());
-}
+	return fetch(url, {
+	  method: 'GET',
+	  body: JSON.stringify(body),
+	}).then(res => res.json());
+  }
 
-export const post = (url: string, body?: any) => {
-  return fetch(url, {
-    method: 'POST',
-    body: JSON.stringify(body),
-	mode: 'no-cors',
-  }).then(res => res.json());
-}
+  export const post = (url: string, body?: any) => {
+	return fetch(url, {
+	  method: 'POST',
+	  body: JSON.stringify(body),
+	}).then(res => res.json());
+  }
 
-export const getFromXml = (url: string, body?: any) => {
-  return fetch(url, {
-    method: 'GET',
-    body: JSON.stringify(body),
-	mode: 'no-cors',
-  })
-    .then(res => res.text())
-    .then(data => {
-		console.log('data', data)
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(data, "application/xml");
-      return xmlToJson(xml);
-    })
-}
+  export const getFromXml = (url: string, body?: any) => {
+	return fetch(url, {
+	  method: 'GET',
+	  body: JSON.stringify(body),
+	})
+	  .then(res => res.text())
+	  .then(data => {
+		const parser = new DOMParser();
+		const xml = parser.parseFromString(data, "application/xml");
+		return xmlToJson(xml);
+	  })
+  }
 
-export const xmlToJson = (xml: Document|ChildNode): string => {
+  export const xmlToJson = (xml: Document|ChildNode): any => {
 
 	// Create the return object
 	var obj: any = {};
@@ -44,8 +40,8 @@ export const xmlToJson = (xml: Document|ChildNode): string => {
 	// 		}
 	// 	}
 	// } else
-    if (xml.nodeType == 3) { // text
-		obj = xml.nodeValue || '';
+	if (xml.nodeType == 3) { // text
+		obj = xml.nodeValue;
 	}
 
 	// do children
@@ -53,15 +49,15 @@ export const xmlToJson = (xml: Document|ChildNode): string => {
 		for(var i = 0; i < xml.childNodes.length; i++) {
 			var item = xml.childNodes.item(i);
 			var nodeName = item.nodeName;
-
-			if (obj && typeof obj === 'object' && typeof(obj[nodeName]) === 'undefined') {
+			if (typeof(obj[nodeName]) == "undefined") {
 				if (nodeName === '#text') {
 					obj = xmlToJson(item);
 				}
 				else {
 					obj[nodeName] = xmlToJson(item);
 				}
-			} else {
+			}
+			else {
 				if (typeof(obj[nodeName].push) == "undefined") {
 					var old = obj[nodeName];
 					obj[nodeName] = [];
@@ -71,6 +67,5 @@ export const xmlToJson = (xml: Document|ChildNode): string => {
 			}
 		}
 	}
-
-	return obj as string;
+	return obj;
 };

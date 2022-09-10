@@ -4,3 +4,9 @@ export interface Currency {
     CharCode: string
     Name: string
 }
+
+export interface Rates {
+    ValCurs : {
+        Valute: any
+    }
+}
