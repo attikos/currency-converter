@@ -1,13 +1,9 @@
 @import 'src/scss/_breakepoints.scss';
 
-html {
-  background-color: #3f3941;
-}
-
 body {
   margin: 0;
   padding: 0;
-  background: url('/city-bg.webp') no-repeat center;
+  background: #3f3941 url('/city-bg.webp') no-repeat center;
   background-size: cover;
   background-attachment: fixed;
   display: flex;
@@ -15,7 +11,6 @@ body {
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  height: 100vh;
 }
 
 #app {
@@ -32,15 +27,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   width: 100%;
   height: calc(100vh - 60px);
-  overflow-y: overlay;
+  overflow-y: auto;
   padding-top: 30px;
   padding-bottom: 30px;
 
   @include xs() {
-    overflow-y: scroll;
     padding-top: 0px;
-    padding-bottom: 120px;
-    height: 100vh;
+    height: calc(-20px + 100vh);
   }
 }
 

@@ -5,8 +5,7 @@
  * @return {boolean} true if string contents all substring letters in the same order
  */
 
-export const fuzzySearch = (str, search) => {
-
+export const fuzzySearch = (str: string, search: string): boolean => {
     if ( typeof str !== 'string' || typeof search !== 'string' ) {
         return false;
     }

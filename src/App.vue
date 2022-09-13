@@ -14,14 +14,23 @@
   <AppFooter />
 </template>
 
-<script>
+<script lang="ts">
 import CurrencyList from './components/CurrencyList.vue'
 import Exchange from './components/Exchange.vue'
 import AppFooter from './components/AppFooter.vue'
 import { getRatesEng } from './api';
 import { DATA_LOADING_ERROR } from './utils/error-types';
+import { defineComponent } from 'vue';
+import { Currency } from './types';
 
-export default {
+type Data = {
+  currencyRates: Currency[]
+  error: string
+  currency: Currency | null
+  isLoading: boolean
+}
+
+export default defineComponent({
   name: 'App',
 
   components: {
@@ -30,7 +39,7 @@ export default {
     AppFooter,
   },
 
-  data() {
+  data(): Data {
     return {
       currencyRates: [],
       error: null,
@@ -43,8 +52,9 @@ export default {
     this.fetchRates();
   },
 
+
   methods: {
-    setCurrency(currency) {
+    setCurrency(currency: Currency) {
       this.currency = currency;
     },
 
@@ -54,11 +64,13 @@ export default {
 
     async fetchRates() {
       try {
-        this.ratesData = await getRatesEng().then(data => data.ValCurs);
-        this.currencyRates = this.ratesData.Valute;
+        const ratesData = await getRatesEng().then(data => data?.ValCurs);
+
+        this.currencyRates = ratesData.Valute;
       }
       catch (error) {
         this.error = DATA_LOADING_ERROR;
+        console.error(error);
         throw Error('Error getting rates!');
       }
       finally {
@@ -66,9 +78,12 @@ export default {
       }
     },
   }
-}
+});
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="scss">
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: #2c3e50;
+}
 </style>
