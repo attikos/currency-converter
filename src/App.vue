@@ -29,6 +29,7 @@ type Data = {
   currency: Currency | null
   isLoading: boolean
 }
+
 export default defineComponent({
   name: 'App',
 

@@ -7,6 +7,6 @@ export interface Currency {
 
 export interface Rates {
     ValCurs : {
-        Valute: any
+        Valute: Currency[]
     }
 }

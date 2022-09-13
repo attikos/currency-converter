@@ -35,10 +35,12 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { fuzzySearch } from '../utils/fuzzy-search';
+import { Currency } from '@/types';
 
-export default {
+export default defineComponent({
   name: 'CurrencyList',
 
   props: {
@@ -47,7 +49,7 @@ export default {
     },
 
     currencyRates: {
-      type: Array,
+      type: Array as () => Currency[],
     },
 
     isLoading : {
@@ -72,7 +74,7 @@ export default {
       return !this.searchQuery && this.paginatedList.length < this.currencyRates.length;
     },
 
-    filteredList() {
+    filteredList(): Currency[] {
       if (!this.searchQuery) {
         return this.paginatedList;
       }
@@ -83,7 +85,7 @@ export default {
       });
     },
 
-    paginatedList() {
+    paginatedList(): Currency[] {
       const start = 0;
       let end = this.page * this.limit + this.limit;
 
@@ -96,15 +98,15 @@ export default {
   },
 
   methods: {
-    getMoreItems() {
+    getMoreItems(): void {
       this.page++;
     },
 
-    setCurrency(currency) {
+    setCurrency(currency: Currency) {
       this.$emit('set-currency', currency);
     },
   }
-}
+});
 </script>
 
 <style lang="scss" scoped>
